@@ -1,0 +1,106 @@
+
+-- Table: users
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password_hash TEXT,
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table: categories
+CREATE TABLE categories (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100),
+    slug VARCHAR(100) UNIQUE
+);
+
+-- Table: spaces
+CREATE TABLE spaces (
+    id UUID PRIMARY KEY,
+    category_id UUID REFERENCES categories(id),
+    name VARCHAR(150),
+    description TEXT,
+    location VARCHAR(255),
+    latitude DECIMAL(10, 6),
+    longitude DECIMAL(10, 6),
+    price_per_night DECIMAL(12, 2),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table: facilities
+CREATE TABLE facilities (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+-- Table: space_facilities (Many-to-Many)
+CREATE TABLE space_facilities (
+    space_id UUID REFERENCES spaces(id),
+    facility_id UUID REFERENCES facilities(id),
+    PRIMARY KEY (space_id, facility_id)
+);
+
+-- Table: bookings
+CREATE TABLE bookings (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    space_id UUID REFERENCES spaces(id),
+    start_date DATE,
+    end_date DATE,
+    total_price DECIMAL(12, 2),
+    status VARCHAR(20) CHECK (status IN ('pending', 'paid', 'cancelled')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Table: payments
+CREATE TABLE payments (
+    id UUID PRIMARY KEY,
+    booking_id UUID REFERENCES bookings(id),
+    amount DECIMAL(12, 2),
+    method VARCHAR(50),
+    status VARCHAR(20) CHECK (status IN ('pending', 'success', 'failed')),
+    paid_at TIMESTAMP
+);
+
+-- Table: nearby_attractions
+CREATE TABLE nearby_attractions (
+    id UUID PRIMARY KEY,
+    space_id UUID REFERENCES spaces(id),
+    name VARCHAR(150),
+    description TEXT,
+    distance_km DECIMAL(5, 2)
+);
+
+-- Table: room_types
+CREATE TABLE room_types (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+-- Table: space_room_types (Many-to-Many)
+CREATE TABLE space_room_types (
+    space_id UUID REFERENCES spaces(id),
+    room_type_id UUID REFERENCES room_types(id),
+    PRIMARY KEY (space_id, room_type_id)
+);
+
+-- Table: images
+CREATE TABLE images (
+    id UUID PRIMARY KEY,
+    space_id UUID REFERENCES spaces(id),
+    image_url TEXT,
+    is_primary BOOLEAN DEFAULT FALSE
+);
+
+-- Table: reviews
+CREATE TABLE reviews (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    space_id UUID REFERENCES spaces(id),
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
