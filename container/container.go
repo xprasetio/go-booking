@@ -2,6 +2,7 @@ package container
 
 import (
 	"booking/config"
+	"booking/internal/booking"
 	"booking/internal/category"
 	"booking/internal/facility"
 	"booking/internal/space"
@@ -154,6 +155,24 @@ func NewContainer() (di.Container, error) {
 			Build: func(ctn di.Container) (interface{}, error) {
 				spaceFacilityService := ctn.Get(SpaceFacilityServiceDefName).(spacefacility.SpaceFacilityServiceInterface)
 				return spacefacility.NewSpaceFacilityHandler(spaceFacilityService), nil
+			},
+		},
+		{
+			Name: BookingServiceDefName,
+			Build: func(ctn di.Container) (interface{}, error) {
+				db := ctn.Get(DBDefName).(*gorm.DB)
+				logger := ctn.Get(LoggerDefName).(logger.Logger)
+				userService := ctn.Get(UserServiceDefName).(user.UserServiceInterface)
+				spaceService := ctn.Get(SpaceServiceDefName).(space.SpaceServiceInterface)
+				return booking.NewBookingService(db, logger, userService, spaceService), nil
+			},
+		},
+		{
+			Name: BookingHandlerDefName,
+			Build: func(ctn di.Container) (interface{}, error) {
+				bookingService := ctn.Get(BookingServiceDefName).(booking.BookingServiceInterface)
+				logger := ctn.Get(LoggerDefName).(logger.Logger)
+				return booking.NewBookingHandler(bookingService, logger), nil
 			},
 		},
 	}

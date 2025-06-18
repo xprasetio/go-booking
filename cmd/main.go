@@ -6,6 +6,7 @@ import (
 
 	"booking/config"
 	"booking/container"
+	"booking/internal/booking"
 	"booking/internal/category"
 	"booking/internal/facility"
 	"booking/internal/space"
@@ -32,13 +33,14 @@ func main() {
 	spaceHandler := ctn.Get(container.SpaceHandlerDefName).(*space.SpaceHandler)
 	facilityHandler := ctn.Get(container.FacilityHandlerDefName).(*facility.FacilityHandler)
 	spaceFacilityHandler := ctn.Get(container.SpaceFacilityHandlerDefName).(*spacefacility.SpaceFacilityHandler)
+	bookingHandler := ctn.Get(container.BookingHandlerDefName).(*booking.BookingHandler)
 
 	// Get middleware
 	authMiddleware := ctn.Get(container.AuthMiddlewareDefName).(echo.MiddlewareFunc)
 	adminMiddleware := ctn.Get(container.AdminAuthMiddlewareDefName).(echo.MiddlewareFunc)
 
 	// Setup routes
-	routes.SetupRoutes(e, userHandler, categoryHandler, spaceHandler, facilityHandler, spaceFacilityHandler, authMiddleware, adminMiddleware)
+	routes.SetupRoutes(e, userHandler, categoryHandler, spaceHandler, facilityHandler, spaceFacilityHandler, bookingHandler, authMiddleware, adminMiddleware)
 
 	// Get config and start server
 	cfg := ctn.Get(container.ConfigDefName).(config.Config)

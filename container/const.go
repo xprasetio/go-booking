@@ -16,6 +16,7 @@ const (
 	SpaceServiceDefName         string = "space.service"
 	SpaceFacilityServiceDefName string = "space_facility.service"
 	FacilityServiceDefName      string = "facility.service"
+	BookingServiceDefName       string = "booking.service"
 
 	//Handler
 	UserHandlerDefName          string = "user.handler"
@@ -23,4 +24,5 @@ const (
 	SpaceHandlerDefName         string = "space.handler"
 	SpaceFacilityHandlerDefName string = "space_facility.handler"
 	FacilityHandlerDefName      string = "facility.handler"
+	BookingHandlerDefName       string = "booking.handler"
 )

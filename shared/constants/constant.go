@@ -2,7 +2,10 @@ package constants
 
 import "golang.org/x/crypto/bcrypt"
 
-type Role string
+type (
+	Role          string
+	BookingStatus string
+)
 
 const (
 	RoleSuperAdmin Role = "superadmin"
@@ -11,4 +14,8 @@ const (
 
 	PasswordMinLength = 6
 	BcryptCost        = bcrypt.DefaultCost
+
+	BookingStatusPending   BookingStatus = "pending"
+	BookingStatusPaid      BookingStatus = "paid"
+	BookingStatusCancelled BookingStatus = "cancelled"
 )

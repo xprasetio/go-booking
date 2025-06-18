@@ -1,6 +1,7 @@
 package routes
 
 import (
+	bookingHandler "booking/internal/booking"
 	categoryHandler "booking/internal/category"
 	facilityHandler "booking/internal/facility"
 	spaceHandler "booking/internal/space"
@@ -17,17 +18,20 @@ func SetupRoutes(
 	spaceHandler *spaceHandler.SpaceHandler,
 	facilityHandler *facilityHandler.FacilityHandler,
 	spaceFacilityHandler *spaceFacilityHandler.SpaceFacilityHandler,
+	bookingHandler *bookingHandler.BookingHandler,
 	authMiddleware echo.MiddlewareFunc,
 	adminMiddleware echo.MiddlewareFunc,
 ) {
 	// Public routes
 	e.POST("/register", userHandler.Register)
 	e.POST("/login", userHandler.Login)
+	// e.POST("/booking", bookingHandler.Create)
 
 	// Protected routes
 	protected := e.Group("")
 	protected.Use(authMiddleware)
 	{
+		protected.POST("/booking", bookingHandler.Create)
 		// User routes
 		protected.POST("/logout", userHandler.Logout)
 		// users routes

@@ -8,6 +8,7 @@ import (
 	spaceModel "booking/internal/space/model"
 	spaceFacilityModel "booking/internal/space_facility/model"
 	userModel "booking/internal/user/model"
+	bookingModel "booking/internal/booking/model"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -26,7 +27,7 @@ func InitDB(host, port, user, password, dbname string) (*gorm.DB, error) {
 	err = db.AutoMigrate(
 		&userModel.User{}, &categoryModel.Category{},
 		&spaceModel.Space{}, &facilityModel.Facility{},
-		&spaceFacilityModel.SpaceFacility{},
+		&spaceFacilityModel.SpaceFacility{},&bookingModel.Booking{},
 	)
 	if err != nil {
 		return nil, err
