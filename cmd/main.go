@@ -9,6 +9,7 @@ import (
 	"booking/internal/category"
 	"booking/internal/facility"
 	"booking/internal/space"
+	spacefacility "booking/internal/space_facility"
 	"booking/internal/user"
 	"booking/routes"
 
@@ -30,19 +31,14 @@ func main() {
 	categoryHandler := ctn.Get(container.CategoryHandlerDefName).(*category.CategoryHandler)
 	spaceHandler := ctn.Get(container.SpaceHandlerDefName).(*space.SpaceHandler)
 	facilityHandler := ctn.Get(container.FacilityHandlerDefName).(*facility.FacilityHandler)
+	spaceFacilityHandler := ctn.Get(container.SpaceFacilityHandlerDefName).(*spacefacility.SpaceFacilityHandler)
 
 	// Get middleware
 	authMiddleware := ctn.Get(container.AuthMiddlewareDefName).(echo.MiddlewareFunc)
 	adminMiddleware := ctn.Get(container.AdminAuthMiddlewareDefName).(echo.MiddlewareFunc)
 
 	// Setup routes
-	routes.SetupRoutes(e, userHandler, categoryHandler, spaceHandler, facilityHandler, authMiddleware, adminMiddleware)
-
-	// Get database instance and run migrations
-	// db := ctn.Get(container.DBDefName).(*gorm.DB)
-	// if err := database.Migrate(db); err != nil {
-	// 	log.Fatal("Cannot run database migrations:", err)
-	// }
+	routes.SetupRoutes(e, userHandler, categoryHandler, spaceHandler, facilityHandler, spaceFacilityHandler, authMiddleware, adminMiddleware)
 
 	// Get config and start server
 	cfg := ctn.Get(container.ConfigDefName).(config.Config)

@@ -5,6 +5,7 @@ import (
 	"booking/internal/category"
 	"booking/internal/facility"
 	"booking/internal/space"
+	spacefacility "booking/internal/space_facility"
 	"booking/internal/user"
 	"booking/pkg/database"
 	"booking/pkg/logger"
@@ -15,13 +16,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sarulabs/di/v2"
 	"gorm.io/gorm"
-)
-
-const (
-	FacilityServiceDefName      = "facility.service"
-	FacilityHandlerDefName      = "facility.handler"
-	SpaceFacilityServiceDefName = "space_facility.service"
-	SpaceFacilityHandlerDefName = "space_facility.handler"
 )
 
 func NewContainer() (di.Container, error) {
@@ -147,7 +141,21 @@ func NewContainer() (di.Container, error) {
 				return facility.NewFacilityHandler(facilityService), nil
 			},
 		},
-		
+		{
+			Name: SpaceFacilityServiceDefName,
+			Build: func(ctn di.Container) (interface{}, error) {
+				db := ctn.Get(DBDefName).(*gorm.DB)
+				logger := ctn.Get(LoggerDefName).(logger.Logger)
+				return spacefacility.NewSpaceFacilityService(db, logger), nil
+			},
+		},
+		{
+			Name: SpaceFacilityHandlerDefName,
+			Build: func(ctn di.Container) (interface{}, error) {
+				spaceFacilityService := ctn.Get(SpaceFacilityServiceDefName).(spacefacility.SpaceFacilityServiceInterface)
+				return spacefacility.NewSpaceFacilityHandler(spaceFacilityService), nil
+			},
+		},
 	}
 
 	if err := builder.Add(defs...); err != nil {

@@ -6,6 +6,7 @@ import (
 	"booking/internal/user/model"
 	"booking/pkg/response"
 	"booking/shared/constants"
+	"booking/shared/validate"
 
 	"github.com/labstack/echo/v4"
 )
@@ -20,17 +21,6 @@ func NewUserHandler(userService UserServiceInterface) *UserHandler {
 	}
 }
 
-// helper: parse & validate payload
-func bindAndValidate[T any](c echo.Context, dst *T) error {
-	if err := c.Bind(dst); err != nil {
-		return response.BadRequest(c, "invalid request payload", err)
-	}
-	if err := c.Validate(dst); err != nil {
-		return response.ValidationError(c, err)
-	}
-	return nil
-}
-
 // helper: get user_id safely
 func getUserID(c echo.Context) (string, error) {
 	userID, ok := c.Get("user_id").(string)
@@ -42,7 +32,7 @@ func getUserID(c echo.Context) (string, error) {
 
 func (h *UserHandler) Register(c echo.Context) error {
 	var input model.RegisterInput
-	if err := bindAndValidate(c, &input); err != nil {
+	if err := validate.BindAndValidate(c, &input); err != nil {
 		return err
 	}
 
@@ -56,7 +46,7 @@ func (h *UserHandler) Register(c echo.Context) error {
 
 func (h *UserHandler) Login(c echo.Context) error {
 	var input model.LoginInput
-	if err := bindAndValidate(c, &input); err != nil {
+	if err := validate.BindAndValidate(c, &input); err != nil {
 		return err
 	}
 
@@ -104,7 +94,7 @@ func (h *UserHandler) UpdateProfile(c echo.Context) error {
 	}
 
 	var input model.UpdateProfileInput
-	if err := bindAndValidate(c, &input); err != nil {
+	if err := validate.BindAndValidate(c, &input); err != nil {
 		return err
 	}
 
@@ -149,7 +139,7 @@ func (h *UserHandler) UpdateUserRole(c echo.Context) error {
 		Role constants.Role `json:"role" validate:"required"`
 	}
 
-	if err := bindAndValidate(c, &input); err != nil {
+	if err := validate.BindAndValidate(c, &input); err != nil {
 		return err
 	}
 

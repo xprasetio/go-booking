@@ -4,6 +4,7 @@ import (
 	categoryHandler "booking/internal/category"
 	facilityHandler "booking/internal/facility"
 	spaceHandler "booking/internal/space"
+	spaceFacilityHandler "booking/internal/space_facility"
 	userHandler "booking/internal/user"
 
 	"github.com/labstack/echo/v4"
@@ -15,6 +16,7 @@ func SetupRoutes(
 	categoryHandler *categoryHandler.CategoryHandler,
 	spaceHandler *spaceHandler.SpaceHandler,
 	facilityHandler *facilityHandler.FacilityHandler,
+	spaceFacilityHandler *spaceFacilityHandler.SpaceFacilityHandler,
 	authMiddleware echo.MiddlewareFunc,
 	adminMiddleware echo.MiddlewareFunc,
 ) {
@@ -67,6 +69,12 @@ func SetupRoutes(
 			facilities.GET("/:id", facilityHandler.GetByID)
 			facilities.PUT("/:id", facilityHandler.Update)
 			facilities.DELETE("/:id", facilityHandler.Delete)
+		}
+		// Space Facility routes
+		spaceFacilities := protected.Group("/admin/v1/space-facilities")
+		spaceFacilities.Use(adminMiddleware)
+		{
+			spaceFacilities.POST("", spaceFacilityHandler.Create)
 		}
 	}
 }
